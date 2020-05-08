@@ -1,7 +1,11 @@
 package com.iu.house.dataClean;
 
+import org.bson.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cleaner {
     private Elements pageData;              //Bir sayfadaki tüm veriler
@@ -11,13 +15,14 @@ public class Cleaner {
     }
 
 
-    public String clean() {
+    public List<Document> clean() {
+        List<Document> konutlar= new ArrayList<Document>();
 
 
         String konut ="";
         int i = 1;
         for (Element singleAdvert : pageData) {                     //singleAdvert = sayfada ki ilanlardan biri
-            if (singleAdvert.select(".floortype").text().equals(""))    //eğer kat numarası yoksa çoklu ilandır, ilan atlananır
+            if (singleAdvert.select(".floortype").text().equals(""))    //eğer kat numarası yoksa çoklu ilandır, ilan atlanır
                 continue;
             else {
 
@@ -69,15 +74,25 @@ public class Cleaner {
                 String ilce = lokasyon[0];
                 String mahalle = lokasyon[1];
 
+                String odaSayisi=singleAdvert.select(".houseRoomCount").text();
                 konut = i + ". " + ucretSon + " # " + singleAdvert.select(".houseRoomCount").text()
-                        + " # " + m_kareSon + " # " + bina_yasiSon + " # " + kat_noSon;
+                        + " # " + m_kareSon + " # " + bina_yasiSon + " # " + kat_noSon + " # "
+                        + ilce + " # " + mahalle;
 
                 System.out.println(konut);
+
+                Document doc=new Document("ucret",Integer.parseInt(ucretSon)).append("OdaSayisi",odaSayisi)
+                        .append("metreKare",Integer.parseInt(m_kareSon))
+                        .append("binaYasi",Integer.parseInt(bina_yasiSon))
+                        .append("katNo",Integer.parseInt(kat_noSon))
+                        .append("ilce",ilce).append("mahalle",mahalle);
+
+                konutlar.add(doc);
 
                 i++;
             }
         }
 
-        return konut;
+        return konutlar;
     }
 }
