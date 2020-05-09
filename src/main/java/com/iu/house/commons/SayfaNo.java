@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 public class SayfaNo {          //her bir ilin kaç sayfa ilanı olduğunu buluruz
-    public String sayfaNo(String url) throws IOException {
+    public String sayfaNo(String url) throws IOException, InterruptedException {
 
         String newIP= IPGenerator.getNewIP();
         Document doc=new URLProducer().urlProduce(url,newIP);

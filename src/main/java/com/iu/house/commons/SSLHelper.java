@@ -7,6 +7,9 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
+//Sertifikasyon hataları için kullanılan class
+//link: https://stackoverflow.com/a/58325184
+
 public class SSLHelper {
 
     static public Connection getConnection(String url){

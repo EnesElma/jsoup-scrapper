@@ -16,19 +16,16 @@ public class Cleaner {
         this.il=il;
     }
 
-
-    public List<Document> clean() {
+    public List<Document> clean() {         //çektiğimiz sayfalardaki dataları temizleyen metot
 
         List<Document> konutlar= new ArrayList<Document>();
 
+        for (Element singleAdvert : pageData) {                     //singleAdvert = sayfada ki ilan bloklarından biri
 
-        String konut ="";
-        for (Element singleAdvert : pageData) {                     //singleAdvert = sayfada ki ilanlardan biri
             if (singleAdvert.select(".floortype").text().equals(""))    //eğer kat numarası yoksa çoklu ilandır, ilan atlanır
                 continue;
+
             else {
-
-
                 String[] ucret1 = singleAdvert.select(".list-view-price").text().split(" ");     //"TL" yazısını silme
                 String[] ucret2 = ucret1[0].split(",");                                         //virgülleri silme
                 String ucretSon = "";
@@ -68,7 +65,7 @@ public class Cleaner {
                         || singleAdvert.select(".floortype").text().equals("Giriş Katı")
                         || singleAdvert.select(".floortype").text().equals("Zemin")) {
                     kat_noSon = "0";
-                } else if (singleAdvert.select(".floortype").text().equals("Villa Katı")) {
+                } else if (singleAdvert.select(".floortype").text().equals("Villa Katı")) {     //Villa katı gibi özel durumlar için -10 -11 gibi değerler
                     kat_noSon = "-10";
                 } else if (singleAdvert.select(".floortype").text().equals("En Üst Kat")
                         ||  singleAdvert.select(".floortype").text().equals("Çatı Katı")
@@ -98,13 +95,11 @@ public class Cleaner {
                 String mahalle = lokasyon[1];
 
                 String odaSayisi=singleAdvert.select(".houseRoomCount").text();
-                konut = Scrapper.sayac + ". " + ucretSon + " # " + singleAdvert.select(".houseRoomCount").text()
-                        + " # " + m_kareSon + " # " + bina_yasiSon + " # " + kat_noSon + " # "
-                        + " # " + il + " # "+ ilce + " # " + mahalle;
+                String title=singleAdvert.select(".list-view-header").text().trim();
 
-                System.out.println(konut);
-
-                Document doc=new Document("no",Scrapper.sayac).append("ucret",Integer.parseInt(ucretSon))
+                Document doc=new Document("no",Scrapper.sayac)
+                        .append("title",title)
+                        .append("ucret",Integer.parseInt(ucretSon))
                         .append("OdaSayisi",odaSayisi)
                         .append("metreKare",Integer.parseInt(m_kareSon))
                         .append("binaYasi",Integer.parseInt(bina_yasiSon))
@@ -113,11 +108,9 @@ public class Cleaner {
                         .append("ilce",ilce).append("mahalle",mahalle);
 
                 konutlar.add(doc);
-
                 Scrapper.sayac++;
             }
         }
-
         return konutlar;
     }
 }
